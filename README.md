@@ -30,6 +30,7 @@ Consider 3 things to maintain:
 2. Node size is bounded by a constant
 3. Node is not empty.
 
+
 ### Implementation on Disk (Important Considerations)
 
 Things change when you are dealing with real hardware, something I had not encountered before (at a DB level)
@@ -62,3 +63,15 @@ Two problems with this approach:
 1. How to find tree root as it changes after each update? solve this later
 2. How do we resuse nodes from old versions? *free list* helps here
 
+### Node Structure
+
+![alt text](images/image.png)
+
+Constant idx values to move ahead helps KV lookups reduce to O(1). Very neat. However, how would they scale?
+
+
+## TODO List
+
+- nodeLookupLessEqual
+    - Implement binary search
+    - Why not just break when $found = i$?

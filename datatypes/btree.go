@@ -1,6 +1,6 @@
 package datatypes
 
-// generate a type
+// BNode Type
 type BNode []byte
 
 type BTree struct {
