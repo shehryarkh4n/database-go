@@ -9,6 +9,6 @@ type BTree struct {
 
 	// callbacks for managing on-disk pages
 	get func(uint64) []byte // derefence a pointer
-	new func([]byte) uint64 // allocate a new page
+	New func([]byte) uint64 // allocate a new page
 	del func(uint64)        // deallocate a page
 }

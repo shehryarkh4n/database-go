@@ -75,3 +75,9 @@ Constant idx values to move ahead helps KV lookups reduce to O(1). Very neat. Ho
 - nodeLookupLessEqual
     - Implement binary search
     - Why not just break when $found = i$?
+
+- nodeInsert
+- leafUpdate
+- nodeSplit2
+- SetPtr
+- SetOffset

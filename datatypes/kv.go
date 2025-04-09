@@ -8,13 +8,13 @@ import (
 
 // Offset code
 func offsetPos(node BNode, idx uint16) uint16 {
-	if !(1 <= idx && idx <= node.nkeys()) {
+	if !(1 <= idx && idx <= node.Nkeys()) {
 		panic("offsetPos problem!")
 	}
-	return constants.HEADER + 8*node.nkeys() + 2*(idx-1)
+	return constants.HEADER + 8*node.Nkeys() + 2*(idx-1)
 }
 
-func (node BNode) getOffset(idx uint16) uint16 {
+func (node BNode) GetOffset(idx uint16) uint16 {
 	if idx == 0 {
 		return 0
 	}
@@ -22,21 +22,21 @@ func (node BNode) getOffset(idx uint16) uint16 {
 	return binary.LittleEndian.Uint16(node[offsetPos(node, idx):])
 }
 
-func (node BNode) setOffset(idx uint16, offset uint16)
+func (node BNode) SetOffset(idx uint16, offset uint16)
 
 // Key-Value Code
-func (node BNode) kvPos(idx uint16) uint16 {
-	if idx > node.nkeys() {
+func (node BNode) KvPos(idx uint16) uint16 {
+	if idx > node.Nkeys() {
 		panic("kvPos problem!")
 	}
-	return constants.HEADER + 8*node.nkeys() + 2*node.nkeys() + node.getOffset(idx)
+	return constants.HEADER + 8*node.Nkeys() + 2*node.Nkeys() + node.GetOffset(idx)
 }
 
-func (node BNode) getKey(idx uint16) []byte {
-	if idx >= node.nkeys() {
+func (node BNode) GetKey(idx uint16) []byte {
+	if idx >= node.Nkeys() {
 		panic("getKey KV problem!")
 	}
-	pos := node.kvPos(idx)
+	pos := node.KvPos(idx)
 	klen := binary.LittleEndian.Uint16(node[pos:])
 	// Very neat way of doing this in Go
 	// This basically says go to the start of node's "pos+4"-th position
@@ -47,11 +47,11 @@ func (node BNode) getKey(idx uint16) []byte {
 }
 
 func (node BNode) getVal(idx uint16) []byte {
-	if idx >= node.nkeys() {
+	if idx >= node.Nkeys() {
 		panic("getVal KV problem!")
 	}
 
-	pos := node.kvPos(idx)
+	pos := node.KvPos(idx)
 	klen := binary.LittleEndian.Uint16(node[pos:])
 	vlen := binary.LittleEndian.Uint16(node[pos:])
 
@@ -63,15 +63,15 @@ func (node BNode) getVal(idx uint16) []byte {
 
 // node size in bytes
 // very smart lookup for node size.
-// node.nkeys() provides the total number of keys, which is automatically
+// node.Nkeys() provides the total number of keys, which is automatically
 // the idx of the last KV
-func (node BNode) nbytes() uint16 {
-	return node.kvPos(node.nkeys())
+func (node BNode) Nbytes() uint16 {
+	return node.KvPos(node.Nkeys())
 }
 
 // returns the first child node whose range intersects the key so
 // === (child[i] <= key)
-func nodeLookupLessEqual(node BNode, key []byte) uint16 {
+func NodeLookupLessEqual(node BNode, key []byte) uint16 {
 	found := uint16(0)
 
 	// left := uint16(0)
@@ -96,8 +96,8 @@ func nodeLookupLessEqual(node BNode, key []byte) uint16 {
 	// 	}
 	// }
 
-	for i := uint16(1); i < node.nkeys(); i++ {
-		cmp := bytes.Compare(node.getKey(i), key) // Compare returns -1 if a < b
+	for i := uint16(1); i < node.Nkeys(); i++ {
+		cmp := bytes.Compare(node.GetKey(i), key) // Compare returns -1 if a < b
 
 		if cmp <= -1 { // why not just break here?
 			found = i
