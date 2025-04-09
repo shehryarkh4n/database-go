@@ -30,5 +30,17 @@ func treeInsert(tree *datatypes.BTree, node datatypes.BNode, key []byte, val []b
 }
 
 func nodeInsert(tree *datatypes.BTree, new, node datatypes.BNode, idx uint16, key []byte, val []byte) {
-	panic("unimplemented")
+	kptr := node.GetPtr(idx)
+
+	// insertion to kid node, this is recursive
+	knode := treeInsert(tree, tree.Get(kptr), key, val)
+
+	// split (why?)
+	nsplit, split := nodeSplit3(knode)
+
+	// deallocate kid node
+	tree.Del(kptr)
+
+	// update kid links
+	nodeReplaceChildN(tree, new, node, idx, split[:nsplit]...)
 }
